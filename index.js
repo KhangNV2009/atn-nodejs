@@ -34,26 +34,30 @@ app.post('/api/staff/register', (request, response) => {
   const email = request.query.email
   const password = request.query.password
 
-  try {
-    client.query("INSERT INTO staff (branch_id, staff_name, staff_email, staff_password, staff_created_at) VALUES ($1, $2, LOWER($3), $4, current_timestamp);",
-      [branchId, name, email, password],
-      (err, res) => {
-        response.send(res.rows)
-      })
-  } catch (error) {
-    console.log(error)
+  if(branchId != null && name != null && email != null && password != null) {
+    try {
+      client.query("INSERT INTO staff (branch_id, staff_name, staff_email, staff_password, staff_created_at) VALUES ($1, $2, LOWER($3), $4, current_timestamp);",
+        [branchId, name, email, password],
+        (err, res) => {
+          response.send(res.rows)
+        })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
 app.get('/api/staff/login', (request, response) => {
   const email = request.query.email
   const password = request.query.password
-  try {
-    client.query("SELECT * FROM staff WHERE (staff_email = LOWER($1) AND staff_password = $2);", [email, password], (err, res) => {
-      response.send(res.rows)
-    });
-  } catch (error) {
-    console.error(error)
+  if(email != null && password != null) {
+    try {
+      client.query("SELECT * FROM staff WHERE (staff_email = LOWER($1) AND staff_password = $2);", [email, password], (err, res) => {
+        response.send(res.rows)
+      });
+    } catch (error) {
+      console.error(error)
+    }
   }
 })
 
@@ -73,14 +77,16 @@ app.post('/api/customer/register', (request, response) => {
   const email = request.query.email
   const password = request.query.password
 
-  try {
-    client.query("INSERT INTO customer (customer_name, customer_email, customer_password, customer_created_at) VALUES ($1, LOWER($2), $3, current_timestamp);",
-      [name, email, password],
-      (err, res) => {
-        response.send(res.rows)
-      })
-  } catch (error) {
-    console.log(error)
+  if(name != null && email != null && password != null) {
+    try {
+      client.query("INSERT INTO customer (customer_name, customer_email, customer_password, customer_created_at) VALUES ($1, LOWER($2), $3, current_timestamp);",
+        [name, email, password],
+        (err, res) => {
+          response.send(res.rows)
+        })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
@@ -96,12 +102,15 @@ app.get('/api/customer/all', (request, response) => {
 
 app.get('/api/customer', (request, response) => {
   const email = request.query.email
-  try {
-    client.query("SELECT * FROM customer WHERE customer_email = $1", [email], (err, res) => {
-      response.send(res.rows)
-    })
-  } catch (error) {
-    console.log(error)
+
+  if(email != null) {
+    try {
+      client.query("SELECT * FROM customer WHERE customer_email = $1", [email], (err, res) => {
+        response.send(res.rows)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
@@ -114,15 +123,17 @@ app.post('/api/product/add', (request, response) => {
   const productImage = request.query.productImage
   const productQuantity = request.query.productQuantity
 
-  try {
-    client.query("INSERT INTO product (supplier_id, category_id, product_name, product_price, product_image, product_quantity, product_created_at)" +
-      "VALUES ($1, $2, $3, $4, $5, $6, current_timestamp);",
-      [suppilerId, categoryId, productName, productPrice, productImage, productQuantity],
-      (err, res) => {
-        response.send(res.rows)
-      })
-  } catch (error) {
-    console.log(error)
+  if(suppilerId != null && categoryId != null && productName != null && productPrice != null && productImage != null && productQuantity != null && productPrice > 0 && productQuantity > 0) {
+    try {
+      client.query("INSERT INTO product (supplier_id, category_id, product_name, product_price, product_image, product_quantity, product_created_at)" +
+        "VALUES ($1, $2, $3, $4, $5, $6, current_timestamp);",
+        [suppilerId, categoryId, productName, productPrice, productImage, productQuantity],
+        (err, res) => {
+          response.send(res.rows)
+        })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
@@ -183,12 +194,14 @@ app.get('/api/order/all', (request, response) => {
 app.post('/api/order/add', (request, response) => {
   const customerId = request.query.customerId
   const staffId = request.query.staffId
-  try {
-    client.query("INSERT INTO orders (customer_id, staff_id, order_at) VALUES ($1, $2, current_timestamp);", [customerId, staffId], (err, res) => {
-      response.send(res.rows)
-    })
-  } catch (error) {
-    console.log(error)
+  if(customerId != null && staffId != null) {
+    try {
+      client.query("INSERT INTO orders (customer_id, staff_id, order_at) VALUES ($1, $2, current_timestamp);", [customerId, staffId], (err, res) => {
+        response.send(res.rows)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
@@ -197,26 +210,26 @@ app.post('/api/order-detail/add', (request, response) => {
   const orderId = request.query.orderId
   const productId = request.query.productId
   const quantity = request.query.quantity
-  try {
-    client.query("INSERT INTO order_detail (order_id, product_id, order_detail_quantity) VALUES ($1, $2, $3);", [orderId, productId, quantity], (err, res) => {
-      response.send(res.rows)
-    })
-  } catch (error) {
-    console.log(error)
+  if(orderId != null && productId != null && quantity != null && quantity > 0) {
+    try {
+      client.query("INSERT INTO order_detail (order_id, product_id, order_detail_quantity) VALUES ($1, $2, $3);", [orderId, productId, quantity], (err, res) => {
+        response.send(res.rows)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
 
 app.get('/api/order-detail/all', (request, response) => {
   const orderId = request.query.orderId
-  try {
-    client.query("SELECT orders.order_id, product_name, order_at, product_price, order_detail_quantity, staff_name, customer_name, branch_id FROM orders INNER JOIN order_detail ON orders.order_id = order_detail.order_id INNER JOIN staff ON orders.staff_id = staff.staff_id INNER JOIN customer ON customer.customer_id = orders.customer_id INNER JOIN product ON order_detail.product_id = product.product_id WHERE orders.order_id = $1;", [orderId], (err, res) => {
-      response.send(res.rows)
-    })
-  } catch (error) {
-    console.log(error)
+  if(orderId != null) {
+    try {
+      client.query("SELECT orders.order_id, product_name, order_at, product_price, order_detail_quantity, staff_name, customer_name, branch_id FROM orders INNER JOIN order_detail ON orders.order_id = order_detail.order_id INNER JOIN staff ON orders.staff_id = staff.staff_id INNER JOIN customer ON customer.customer_id = orders.customer_id INNER JOIN product ON order_detail.product_id = product.product_id WHERE orders.order_id = $1;", [orderId], (err, res) => {
+        response.send(res.rows)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 })
-
-//note
-
-//
